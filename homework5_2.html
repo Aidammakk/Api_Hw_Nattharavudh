@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+
+        * {
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        table {
+            border: 1px solid black;
+            margin-left: 25%;
+        }
+
+        td {
+            border: 1px solid black;
+        }
+
+        tr {
+            border: 1px solid black;
+        }
+
+        th {
+            border: 1px solid black;
+        }
+
+    </style>
+
+</head>
+
+<body>
+    <div class="tableA">
+        <h1>homework5_2.html Covid data</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>cases</th>
+                    <th>todayCases</th>
+                    <th>deaths</th>
+                    <th>todayDeaths</th>
+                    <th>recovered</th>
+                    <th>todayRecovered</th>
+                    <th>active</th>
+                    <th>critical</th>
+                </tr>
+            </thead>
+            <tbody id="displaydata"></tbody>
+
+            <script>
+
+                let MyData = [];
+           
+                const GetDataA = function(callback) {
+                    axios.get("https://corona.lmao.ninja/v3/covid-19/all").then(function (response_world) {
+                    console.log(response_world.data)
+                    MyData.push(["World", response_world.data])
+                    callback();
+                    })
+                }
+               
+                const GetDataB = function(callback) {
+                    axios.get("https://corona.lmao.ninja/v3/covid-19/countries/thailand").then(function (response_th) {
+                    console.log(response_th.data)
+                    MyData.push(["Thailand", response_th.data])
+                    callback();
+                    })
+                }
+                const getCovidDataAll = function(category, cases, todayCases, deaths, todayDeaths, recovered, todayRecovered, active, critical) {
+                    return`
+                        <td> ${category || "World"}</td>
+                        <td> ${cases} </td>
+                        <td> ${todayCases} </td>
+                        <td> ${deaths} </td>
+                        <td> ${todayDeaths} </td>
+                        <td> ${recovered} </td>
+                        <td> ${todayRecovered} </td>
+                        <td> ${active} </td>
+                        <td> ${critical} </td>
+                        `;
+                }
+                
+                GetDataA(function () {
+           
+                    GetDataB(function () {
+                            console.log(MyData);
+                            const element = document.getElementById("displaydata");
+                            element.innerHTML = "";
+                            for (let i = 0; i < MyData.length; i++) {
+                                let category = MyData[i][1].country;
+                                let cases = MyData[i][1].cases;
+                                let todayCases = MyData[i][1].todayCases;
+                                let deaths = MyData[i][1].deaths;
+                                let todayDeaths = MyData[i][1].todayDeaths;
+                                let recovered = MyData[i][1].recovered;
+                                let todayRecovered = MyData[i][1].todayRecovered;
+                                let active = MyData[i][1].active;
+                                let critical = MyData[i][1].critical;
+                                element.innerHTML += getCovidDataAll(category, cases, todayCases, deaths, todayDeaths, recovered, todayRecovered, active, critical);
+                            }
+                    
+                    const DataToObj = Object.fromEntries(MyData);
+                    console.log(DataToObj);
+                    });
+                 });
+            </script>
+
+        </table>
+    </div>
+
+   
+</body>
+
+</html>
